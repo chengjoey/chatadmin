@@ -1,14 +1,27 @@
 package router
 
 import (
+	"embed"
+	"html/template"
+	"io/fs"
 	"net/http"
 	"runtime/debug"
 
 	"github.com/chengjoey/chatadmin/app/api"
 	"github.com/chengjoey/chatadmin/controller"
-	"github.com/chengjoey/chatadmin/global"
 	"github.com/chengjoey/chatadmin/pkg/response"
 	"github.com/gin-gonic/gin"
+)
+
+var (
+// //go:embed template
+// embededFiles embed.FS
+// //go:embed ./template/js
+// jsFiles embed.FS
+// //go:embed ./template/css
+// cssFiles embed.FS
+// //go:embed ./template/static
+// staticFiles embed.FS
 )
 
 func JSONAppErrorReporter() gin.HandlerFunc {
@@ -55,15 +68,32 @@ func CORSMiddleware() gin.HandlerFunc {
 	}
 }
 
-func RegisterHandle(r *gin.Engine) {
+func RegisterHandle(r *gin.Engine, embededFiles embed.FS) {
 	go controller.Broadcaster.Start()
 
 	r.Use(CORSMiddleware())
 	r.Use(JSONAppErrorReporter())
-	r.LoadHTMLGlob(global.RootDir + "/template/*.html")
-	r.Static("/js", global.RootDir+"/template/js")
-	r.Static("/css", global.RootDir+"/template/css")
-	r.Static("/static", global.RootDir+"/template/static")
+	templ := template.Must(template.New("").ParseFS(embededFiles, "template/*.html"))
+	r.SetHTMLTemplate(templ)
+	jsFiles, err := fs.Sub(embededFiles, "template/js")
+	if err != nil {
+		panic(err)
+	}
+	cssFiles, err := fs.Sub(embededFiles, "template/css")
+	if err != nil {
+		panic(err)
+	}
+	staticFiles, err := fs.Sub(embededFiles, "template/static")
+	if err != nil {
+		panic(err)
+	}
+	r.StaticFS("/js", http.FS(jsFiles))
+	r.StaticFS("/css", http.FS(cssFiles))
+	r.StaticFS("/static", http.FS(staticFiles))
+	// r.LoadHTMLGlob(global.RootDir + "/template/*.html")
+	// r.Static("/js", global.RootDir+"/template/js")
+	// r.Static("/css", global.RootDir+"/template/css")
+	// r.Static("/static", global.RootDir+"/template/static")
 	r.GET("/", api.HomeHandle)
 	r.POST("/login", api.Login)
 

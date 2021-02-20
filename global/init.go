@@ -19,17 +19,17 @@ const (
 )
 
 func init() {
-	Init()
+	// Init()
 }
 
 var RootDir string
 
 var once = new(sync.Once)
 
-func Init() {
+func Init(configData []byte) {
 	once.Do(func() {
-		inferRootDir()
-		initConfig()
+		// inferRootDir()
+		initConfig(configData)
 	})
 }
 

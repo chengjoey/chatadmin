@@ -1,32 +1,24 @@
 package global
 
 import (
-	"github.com/fsnotify/fsnotify"
+	"bytes"
+
 	"github.com/spf13/viper"
 )
 
 var (
-	SensitiveWords  []string
-	MessageQueueLen = 1024
-	RedisAddr       string
+	RedisAddr  string
+	ServerAddr string
 )
 
-func initConfig() {
-	viper.SetConfigName("chatadmin")
-	viper.AddConfigPath(RootDir + "/config")
+func initConfig(byteData []byte) {
+	viper.SetConfigType("yaml")
+	r := bytes.NewReader(byteData)
+	// viper.AddConfigPath(RootDir + "/config")
 
-	if err := viper.ReadInConfig(); err != nil {
+	if err := viper.ReadConfig(r); err != nil {
 		panic(err)
 	}
-
-	SensitiveWords = viper.GetStringSlice("sensitive")
-	MessageQueueLen = viper.GetInt("message-queue")
 	RedisAddr = viper.GetString("redis")
-
-	viper.WatchConfig()
-	viper.OnConfigChange(func(e fsnotify.Event) {
-		viper.ReadInConfig()
-
-		SensitiveWords = viper.GetStringSlice("sensitive")
-	})
+	ServerAddr = viper.GetString("server")
 }

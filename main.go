@@ -1,24 +1,29 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 
+	"github.com/chengjoey/chatadmin/global"
 	"github.com/chengjoey/chatadmin/router"
-
 	"github.com/gin-gonic/gin"
 )
 
 var (
-	addr   = ":9090"
-	banner = "ChatRoom，start on：%s"
+	banner = "ChatRoom，start on "
+	//go:embed template
+	embededFiles embed.FS
+	//go:embed config/chatadmin.yaml
+	configData []byte
 )
 
 func init() {
+	global.Init(configData)
 }
 
 func main() {
-	fmt.Printf(banner, addr)
+	fmt.Println(banner, global.ServerAddr)
 	server := gin.Default()
-	router.RegisterHandle(server)
-	server.Run("0.0.0.0:9090")
+	router.RegisterHandle(server, embededFiles)
+	server.Run(global.ServerAddr)
 }
