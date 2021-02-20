@@ -90,6 +90,14 @@ func RegisterHandle(r *gin.Engine, embededFiles embed.FS) {
 	r.StaticFS("/js", http.FS(jsFiles))
 	r.StaticFS("/css", http.FS(cssFiles))
 	r.StaticFS("/static", http.FS(staticFiles))
+	r.GET("favicon.ico", func(c *gin.Context) {
+		file, _ := embededFiles.ReadFile("template/favicon.ico")
+		c.Data(
+			http.StatusOK,
+			"image/x-icon",
+			file,
+		)
+	})
 	// r.LoadHTMLGlob(global.RootDir + "/template/*.html")
 	// r.Static("/js", global.RootDir+"/template/js")
 	// r.Static("/css", global.RootDir+"/template/css")
