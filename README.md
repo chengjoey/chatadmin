@@ -14,17 +14,17 @@ install redis and mofify chatadmin.yaml
 
 ## Usage
 admin和administrator为管理员用户, 可查看有哪些用户在线且能与之聊天
-open browser http://127.0.0.1:3389/
+open browser http://127.0.0.1:9090/
 
-![普通用户进入图](https://github.com/chengjoey/chatadmin/blob/main/images/user-chat.jpg)
+![普通用户进入图](https://github.com/chengjoey/chatadmin/blob/main/images/user-chat.png)
 
-![管理人员进入图](https://github.com/chengjoey/chatadmin/blob/main/images/admin.jpg)
+![管理人员进入图](https://github.com/chengjoey/chatadmin/blob/main/images/admin.png)
 
-![聊天图](https://github.com/chengjoey/chatadmin/blob/main/images/chat.jpg)
+![聊天图](https://github.com/chengjoey/chatadmin/blob/main/images/chat.png)
 
 
 ## Contributing
 joeycheng
 
 ## License
-[DEMO](http://101.91.120.168:3389/)
+[DEMO](http://34.92.241.235:9090/)
