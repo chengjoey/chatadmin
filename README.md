@@ -4,7 +4,9 @@
 
 
 ## Installation
-go get github.com/chengjoey/chatadmin
+git clone https://github.com/chengjoey/chatadmin.git
+
+go build
 
 install redis and mofify chatadmin.yaml
 
