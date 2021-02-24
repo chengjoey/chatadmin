@@ -90,22 +90,6 @@ func WebSocketHandle(c *gin.Context) {
 	defer conn.Close(websocket.StatusInternalError, "内部出错")
 
 	user.Init(conn, client)
-	// token := c.Query("token")
-	// nickname := c.Query("nickname")
-	// to := c.Query("to")
-	// if l := len(nickname); l < 2 || l > 20 {
-	// 	wsjson.Write(c.Request.Context(), conn, response.AppError{Msg: "非法名称，名称长度：2-20"})
-	// 	conn.Close(websocket.StatusUnsupportedData, "nickname illegal!")
-	// 	return
-	// }
-	// if ok, _ := controller.Broadcaster.IsInRoom(nickname); ok {
-	// 	wsjson.Write(c.Request.Context(), conn, response.AppError{Msg: "该名称已经存在"})
-	// 	conn.Close(websocket.StatusUnsupportedData, "nickname exists")
-	// 	return
-	// }
-
-	// user := controller.NewUser(conn, token, nickname, c.Request.RemoteAddr, to)
-	// user.Token = ""
 
 	controller.Broadcaster.UserEntering(user)
 

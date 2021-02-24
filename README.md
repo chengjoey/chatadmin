@@ -2,6 +2,8 @@
 
 用Golang和reids开发的客户聊天管理系统
 
+[详细介绍地址](http://www.zchengjoey.com/posts/golang实现的商家客户聊天管理系统demo/)
+
 
 ## Installation
 git clone https://github.com/chengjoey/chatadmin.git
@@ -18,12 +20,7 @@ install redis and mofify chatadmin.yaml
 admin和administrator为管理员用户, 可查看有哪些用户在线且能与之聊天
 open browser http://127.0.0.1:9090/
 
-![普通用户进入图](https://github.com/chengjoey/chatadmin/blob/main/images/user-chat.png)
-
-![管理人员进入图](https://github.com/chengjoey/chatadmin/blob/main/images/admin.png)
-
-![聊天图](https://github.com/chengjoey/chatadmin/blob/main/images/chat.png)
-
+![效果图](https://github.com/chengjoey/chatadmin/blob/main/images/chatadmin-demo.gif)
 
 ## Contributing
 joeycheng

@@ -28,6 +28,7 @@ const getters = {
 
 const actions = {
     [LOGIN](context, nickname) {
+        console.log(location.protocol);
         return new Promise(resolve => {
             ApiService.post("login", { nickname: nickname })
                 .then((response) => {

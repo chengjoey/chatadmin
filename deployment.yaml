@@ -1,0 +1,130 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  selector:
+    name: redis
+  ports:
+  - name: http
+    protocol: TCP
+    port: 6379
+    targetPort: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  labels:
+    name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: redis
+  template:
+    metadata:
+      labels:
+        name: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis
+        command:
+          - "redis-server"
+        ports:
+        - containerPort: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatadmin-deployment
+  labels:
+    name: chatadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chatadmin
+  template:
+    metadata:
+      labels:
+        app: chatadmin
+    spec:
+      containers:
+      - name: chatadmin
+        image: registry.zchengjoey.com/chatadmin:02232305
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9090
+      imagePullSecrets:
+      - name: registry-secret
+      # - name: redis
+      #   image: redis
+      #   ports:
+      #   - containerPort: 6379
+      #     protocol: TCP
+      #     name: redis
+      #   volumeMounts:
+      #     - mountPath: /data
+      #       name: redis-data
+      # imagePullSecrets:
+      # - name: registry-secret
+      # volumes:
+      #   - name: redis-data
+      #     hostPath:
+      #       path: /tmp/redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chatadmin
+spec:
+  selector:
+    app: chatadmin
+  ports:
+  - name: http
+    protocol: TCP
+    port: 9090
+    targetPort: 9090
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: chatadmin
+spec:
+  dnsNames:
+    - chatadmin.zchengjoey.com
+  secretName: chatadmin-tls-certificate
+  issuerRef:
+    name: acme-issuer
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: chatadmin
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    certmanager.k8s.io/issuer: acme-issuer
+    nginx.org/websocket-services: "chatadmin"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/send-timeout: "3600"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header Upgrade "websocket";
+      proxy_set_header Connection "Upgrade";
+spec:
+  tls:
+  - hosts:
+    - chatadmin.zchengjoey.com
+    secretName: chatadmin-tls-certificate
+  rules:
+    - host: chatadmin.zchengjoey.com
+      http:
+        paths:
+        - backend:
+            serviceName: chatadmin
+            servicePort: 9090
